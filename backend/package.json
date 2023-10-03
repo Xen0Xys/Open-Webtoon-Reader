@@ -1,0 +1,31 @@
+{
+  "name": "wtdl-lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "lib": "node src/lib/app.js",
+    "api": "node src/api/app.js",
+    "api-dev": "nodemon src/api/app.js",
+    "lint": "eslint . --fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.41.0",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.0.2",
+    "helmet": "^7.0.0",
+    "jsdom": "^22.0.0",
+    "morgan": "^1.10.0",
+    "sequelize": "^6.33.0",
+    "sharp": "^0.32.1",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
