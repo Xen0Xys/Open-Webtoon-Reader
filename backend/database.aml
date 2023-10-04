@@ -7,6 +7,7 @@ webtoons
   title varchar(255)
   author varchar(255)
   genre_id int
+  language varchar(10)
   link varchar(255)
   thumbnail varchar(255)
   background_banner varchar(255)
@@ -36,6 +37,7 @@ users
   id int pk
   username varchar(255)
   password varchar(255)
+  avatar varchar(255)
 
 states
   id int pk

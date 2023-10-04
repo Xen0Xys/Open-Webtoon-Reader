@@ -8,6 +8,7 @@ const {saveInDatabase, stopDownload} = require("./utils/saving/databaseSaving");
 
 async function debug(){
     const webtoons = await getWebtoons("fr");
+    // const target = findWebtoon(webtoons, "My giant nerd boyfriend");
     const target = findWebtoon(webtoons, "Tower of god");
     const completeTarget = await getWebtoonInfos(target);
     console.log(completeTarget);

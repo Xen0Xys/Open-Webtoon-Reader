@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "argon2": "^0.31.1",
     "axios": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -19,7 +20,9 @@
     "express": "^4.18.2",
     "express-rate-limit": "^7.0.2",
     "helmet": "^7.0.0",
+    "joi": "^17.10.2",
     "jsdom": "^22.0.0",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "sequelize": "^6.33.0",
     "sharp": "^0.32.1",

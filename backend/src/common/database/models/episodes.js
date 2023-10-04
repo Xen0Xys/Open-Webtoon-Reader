@@ -20,6 +20,10 @@ module.exports = (sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        image_number: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         thumbnail: {
             type: DataTypes.TEXT,
             allowNull: false

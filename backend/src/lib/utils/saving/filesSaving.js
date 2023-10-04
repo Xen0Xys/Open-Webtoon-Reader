@@ -8,12 +8,12 @@ async function saveAsFiles(webtoon, fromEp = 1, toEp = null){
     fromEp--;
     webtoon = await getWebtoonInfos(webtoon);
     let path = `${process.env.SAVE_PATH}/${webtoon.title}`;
-    await initWebtoonDirectory(webtoon, path)
+    await initWebtoonDirectory(webtoon, path);
     const episodes = await getEpisodes(webtoon.link);
     if(!toEp) toEp = episodes.length - 1;
     for(let i = fromEp; i <= toEp; i++)
         try{
-            await saveEpisode(webtoon, episodes, path, i)
+            await saveEpisode(webtoon, episodes, path, i);
         }catch(e){
             i--;
             console.log("Error, retrying in 10s");
@@ -43,7 +43,7 @@ async function saveEpisode(webtoon, episodes, path, epNumber){
     }
     fs.writeFileSync(`${episodePath}/thumbnail.webp`, await getImage(episodes[epNumber].thumbnail));
     for(let j = 0; j < links.length; j++)
-        await saveEpisodePart(episodes, links, episodePath, epNumber, j)
+        await saveEpisodePart(episodes, links, episodePath, epNumber, j);
     let waitingRandom = random(8000, 12000);
     console.log(`Episode ${epNumber + 1}/${episodes.length} saved, awaiting ${Math.round(waitingRandom/1000)}s for next...`);
     await sleep(waitingRandom);

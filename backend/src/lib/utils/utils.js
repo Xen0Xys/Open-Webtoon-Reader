@@ -1,25 +1,26 @@
 const axios = require("axios");
 const sharp = require("sharp");
+const {ref} = require("joi");
 
-async function getImage(imageLink, format = "webp"){
+async function getImage(imageLink, format = "webp", referer = "https://www.webtoons.com/fr/"){
     switch (format.toLowerCase()){
     case "webp":
-        return await getBufferedImage(imageLink);
+        return await getBufferedImage(imageLink, referer);
     case "dataurl":
-        return `data:image/webp;base64,${(await getBufferedImage(imageLink)).toString("base64")}`;
+        return `data:image/webp;base64,${(await getBufferedImage(imageLink, referer)).toString("base64")}`;
     default:
         throw new Error("Invalid format");
     }
 }
 
-async function getBufferedImage(imageLink){
+async function getBufferedImage(imageLink, referer = "https://www.webtoons.com/fr/"){
     const response = await axios.get(imageLink, {
         responseType: "arraybuffer",
         headers: {
-            "Referer": "https://www.webtoons.com/fr/"
+            "Referer": referer
         }
     });
-    return await sharp(Buffer.from(response.data, "binary")).toFormat("webp").toBuffer()
+    return await sharp(Buffer.from(response.data, "binary")).toFormat("webp").toBuffer();
 }
 
 async function sleep(ms) {
@@ -34,4 +35,4 @@ module.exports = {
     getImage,
     sleep,
     random
-}
+};

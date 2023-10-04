@@ -62,7 +62,8 @@ async function getWebtoons(language="en") {
                     thumbnail,
                     stars: parseWebtoonStars(stars),
                     genre,
-                    id
+                    id,
+                    language
                 };
                 webtoons.push(webtoon);
             }
@@ -99,7 +100,7 @@ async function getWebtoonInfos(webtoon){
     const document = dom.window.document;
     const mobileResponse = await axios.get(mobileUrl, {
         headers: {
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
         }
     });
     const mobileHtmlContent = mobileResponse.data;

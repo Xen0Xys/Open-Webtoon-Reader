@@ -10,8 +10,7 @@ module.exports = (sequelize) => {
         },
         title: {
             type: DataTypes.TEXT,
-            allowNull: false,
-            unique: true
+            allowNull: false
         },
         author: {
             type: DataTypes.TEXT,
@@ -19,6 +18,10 @@ module.exports = (sequelize) => {
         },
         genre_id: {
             type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        language: {
+            type: DataTypes.STRING(10),
             allowNull: false
         },
         link: {
@@ -46,7 +49,13 @@ module.exports = (sequelize) => {
     {
         underscored: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
+        indexes: [
+            {
+                unique: true,
+                fields: ["title", "language"]
+            }
+        ]
     });
     const Genres = getModel(sequelize, "genres.js");
     Webtoons.belongsTo(Genres, {foreignKey: "genre_id"});

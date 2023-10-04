@@ -1,16 +1,13 @@
-const {getWebtoons, getWebtoonById, getWebtoonEpisodes, getGenres} = require("../controllers/infosControllers");
+const {getWebtoons, getWebtoonEpisodes, getEpisodeImages} = require("../controllers/webtoonControllers");
 
 module.exports = (router) => {
-    router.get("/genres", async (req, res) => {
-        await getGenres(req, res);
-    });
     router.get("/webtoons", async (req, res) => {
         await getWebtoons(req, res);
     });
-    router.get("/webtoons/:id", async (req, res) => {
-        await getWebtoonById(req, res);
-    });
-    router.get("/webtoons/:id/episodes", async (req, res) => {
+    router.get("/webtoons/:webtoon_id/episodes", async (req, res) => {
         await getWebtoonEpisodes(req, res);
+    });
+    router.get("/webtoons/:webtoon_id/episode/:episode_number", async (req, res) => {
+        await getEpisodeImages(req, res);
     });
 };
