@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const argon2 = require("argon2");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 
 /**
  * Hashes a content like passwords with Argon2
@@ -76,10 +77,26 @@ function getSignature(content){
     return crypto.createHash("sha512").update(content).digest("hex");
 }
 
+/**
+ * Encodes a payload with a private key and an expiration time
+ * @param payload The payload to encode
+ * @param privateKey The private key to use
+ * @param expiration The expiration time
+ * @returns {*}
+ */
+async function encodeToken(payload, privateKey, expiration) {
+    return jwt.sign(
+        payload,
+        privateKey,
+        {expiresIn: expiration}
+    );
+}
+
 module.exports = {
     hash,
     compareHash,
     encrypt,
     decrypt,
-    getSignature
+    getSignature,
+    encodeToken
 };
