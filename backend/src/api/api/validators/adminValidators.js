@@ -1,4 +1,4 @@
-const joi = require('joi');
+const joi = require("joi");
 
 const createAccountValidator = joi.object({
     username: joi.string().required(),
@@ -20,4 +20,4 @@ module.exports = {
     createAccountValidator,
     updatePasswordValidator,
     startDownloadValidator
-}
+};

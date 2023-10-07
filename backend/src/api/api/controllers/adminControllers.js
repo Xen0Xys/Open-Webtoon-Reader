@@ -1,9 +1,10 @@
-const validators = require('../../../common/utils/validators');
+const validators = require("../../../common/utils/validators");
 const {createAccountValidator, updatePasswordValidator, startDownloadValidator} = require("../validators/adminValidators");
 const sequelize = require("../../../common/database/sequelize");
 const encryption = require("../../../common/utils/encryption");
 const {getDownloadState, saveInDatabase, stopDbDownload} = require("../../../lib/utils/saving/databaseSaving");
 const {getWebtoons, findWebtoon, getWebtoonInfos} = require("../../../lib/utils/webtoon");
+const {isCacheLoaded, isDownloading} = require("../../../lib/lib");
 
 async function createAccount(req, res){
     const value = await validators.validate(createAccountValidator, req.body, res);
@@ -11,7 +12,7 @@ async function createAccount(req, res){
         return;
     if(await sequelize.models.users.findOne({where: {username: value.username}}))
         return res.status(400).json({message: "Username already taken"});
-    const hashedPassword = await encryption.hash(value.password)
+    const hashedPassword = await encryption.hash(value.password);
     const userModel = await sequelize.models.users.create({
         username: value.username,
         password: hashedPassword,
@@ -44,7 +45,7 @@ async function updatePassword(req, res){
     const user = await sequelize.models.users.findOne({where: {id: userId}});
     if(!user)
         return res.status(404).json({message: "User not found"});
-    const hashedPassword = await encryption.hash(value.password)
+    const hashedPassword = await encryption.hash(value.password);
     await user.update({password: hashedPassword});
     res.status(200).json({message: "Password updated"});
 }
@@ -58,10 +59,12 @@ function fetchDownloadState(req, res){
 
 // TODO: Load webtoons in cache
 async function startDownload(req, res){
+    if(!isCacheLoaded())
+        return res.status(400).json({message: "Webtoon cache not loaded"});
     const value = await validators.validate(startDownloadValidator, req.body, res);
     if(!value)
         return;
-    if(getDownloadState())
+    if(isDownloading())
         return res.status(400).json({message: "Download already started"});
     const webtoons = await getWebtoons(value.language);
     const target = findWebtoon(webtoons, value.webtoonName);
@@ -84,4 +87,4 @@ module.exports = {
     fetchDownloadState,
     startDownload,
     stopDownload
-}
+};

@@ -1,4 +1,4 @@
-const adminAuthentication = require("../middlewares/adminAuthentication")
+const adminAuthentication = require("../middlewares/adminAuthentication");
 const {getWebtoons} = require("../controllers/webtoonControllers");
 const {createAccount, deleteAccount, getAccounts, updatePassword, fetchDownloadState, startDownload, stopDownload} = require("../controllers/adminControllers");
 
