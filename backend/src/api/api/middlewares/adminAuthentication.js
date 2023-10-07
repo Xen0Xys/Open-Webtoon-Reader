@@ -9,4 +9,4 @@ module.exports = async (req, res, next) => {
     if(await compareHash(adminKey, process.env.ADMIN_KEY))
         return next();
     return res.status(401).json({message: "Invalid admin key"});
-}
+};
