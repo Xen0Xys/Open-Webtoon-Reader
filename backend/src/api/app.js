@@ -6,6 +6,9 @@ const https = require("https");
 const fs = require("fs");
 const app = express();
 
+// Load webtoon cache
+require("../lib/lib");
+
 // Init database
 require("../common/database/sequelize");
 
@@ -43,12 +46,23 @@ if(process.env.SSL.toLowerCase() === "false"){
         log(false);
     });
 }else{
-    https.createServer({
-        key: fs.readFileSync(process.env.KEY_FILE),
-        cert: fs.readFileSync(process.env.CERT_FILE)
-    }, app).listen(parseInt(process.env.PORT), () => {
-        log(true);
-    });
+    const passphrase = process.env.SSL_PASSPHRASE;
+    if(passphrase === ""){
+        https.createServer({
+            key: fs.readFileSync(process.env.SSL_KEY_FILE),
+            cert: fs.readFileSync(process.env.SSL_CERT_FILE)
+        }, app).listen(parseInt(process.env.PORT), () => {
+            log(true);
+        });
+    }else{
+        https.createServer({
+            key: fs.readFileSync(process.env.SSL_KEY_FILE),
+            cert: fs.readFileSync(process.env.SSL_CERT_FILE),
+            passphrase: process.env.SSL_PASSPHRASE
+        }, app).listen(parseInt(process.env.PORT), () => {
+            log(true);
+        });
+    }
 }
 
 module.exports = app;
