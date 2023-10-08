@@ -1,4 +1,4 @@
-- # API Documentation
+# API Documentation
 
 This documentation provides an overview of the API routes and their corresponding validators for the application.
 ## Table of Contents
