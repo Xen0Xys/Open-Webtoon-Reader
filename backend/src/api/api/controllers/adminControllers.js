@@ -2,9 +2,7 @@ const validators = require("../../../common/utils/validators");
 const {createAccountValidator, updatePasswordValidator, startDownloadValidator} = require("../validators/adminValidators");
 const sequelize = require("../../../common/database/sequelize");
 const encryption = require("../../../common/utils/encryption");
-const {getDownloadState, saveInDatabase, stopDbDownload} = require("../../../lib/utils/saving/databaseSaving");
-const {getWebtoons, findWebtoon, getWebtoonInfos} = require("../../../lib/utils/webtoon");
-const {isCacheLoaded, isDownloading} = require("../../../lib/lib");
+const {getDownloadState, stopDbDownload} = require("../../../lib/utils/saving/databaseSaving");
 
 async function createAccount(req, res){
     const value = await validators.validate(createAccountValidator, req.body, res);
@@ -59,6 +57,7 @@ function fetchDownloadState(req, res){
 
 // TODO: Load webtoons in cache
 async function startDownload(req, res){
+    const {isCacheLoaded, isDownloading, startDownload, findWebtoonInCache} = require("../../../lib/lib");
     if(!isCacheLoaded())
         return res.status(400).json({message: "Webtoon cache not loaded"});
     const value = await validators.validate(startDownloadValidator, req.body, res);
@@ -66,11 +65,10 @@ async function startDownload(req, res){
         return;
     if(isDownloading())
         return res.status(400).json({message: "Download already started"});
-    const webtoons = await getWebtoons(value.language);
-    const target = findWebtoon(webtoons, value.webtoonName);
+    const target = findWebtoonInCache(value.webtoonName, value.language);
     if(!target)
         return res.status(404).json({message: "Webtoon not found"});
-    saveInDatabase(target, value.startEpisode);
+    startDownload(target, value.startEpisode);
     res.status(200).json({message: "Download started"});
 }
 

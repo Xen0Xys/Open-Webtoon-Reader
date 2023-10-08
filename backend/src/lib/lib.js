@@ -21,10 +21,6 @@ async function loadWebtoonCache(){
     cacheLoaded = true;
 }
 
-function getWebtoonsCache(){
-    return webtoons;
-}
-
 function isCacheLoaded(){
     return cacheLoaded;
 }
@@ -52,8 +48,8 @@ loadWebtoonCache().then(() => {
 });
 
 module.exports = {
-    loadWebtoonCache,
-    getWebtoonsCache,
     isCacheLoaded,
     isDownloading,
+    findWebtoonInCache,
+    startDownload
 }

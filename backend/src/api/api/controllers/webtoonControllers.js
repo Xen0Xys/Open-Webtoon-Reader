@@ -1,8 +1,11 @@
 const sequelize = require("../../../common/database/sequelize");
 
 async function getWebtoons(req, res) {
-    const webtoons = await sequelize.models.webtoons.findAll({attributes: ["title", "author", "language", "genre_id", "thumbnail"]});
-    res.status(200).json(webtoons);
+    const webtoons = await sequelize.models.webtoons.findAll({attributes: ["id", "title", "author", "language", "genre_id", "thumbnail"]});
+    const jsonWebtoons = webtoons.map((webtoon) => webtoon.toJSON());
+    for (const webtoon of jsonWebtoons)
+        webtoon.episode_count = await sequelize.models.episodes.count({where: {webtoon_id: webtoon.id}});
+    res.status(200).json(jsonWebtoons);
 }
 
 async function getWebtoonEpisodes(req, res){
