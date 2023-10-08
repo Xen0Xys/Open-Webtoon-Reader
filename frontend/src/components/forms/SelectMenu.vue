@@ -20,14 +20,14 @@ export default {
     }
   },
   created () {
-    this.value = this.selected || undefined
+    this.value = this.options.filter(o => o.selected)[0] || undefined
   },
   methods: {
     selectOption (option) {
       this.value = option
       this.closeOptions()
       this.$emit('valueChange', {
-        value: option
+        option
       })
     },
     openOptions () {

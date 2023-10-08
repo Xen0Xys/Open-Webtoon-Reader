@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import UserLayout from '@/layouts/UserLayout.vue'
 // Views
 import LibraryView from '@/views/LibraryView.vue'
+import WebtoonHomePage from '@/views/WebtoonHomePage.vue'
+import WebtoonEpisodeReader from '@/views/WebtoonEpisodeReader.vue'
 
 const routes = [
   {
@@ -15,9 +17,19 @@ const routes = [
         redirect: '/library'
       },
       {
-        path: 'library',
+        path: 'library/',
         name: 'Library',
         component: LibraryView
+      },
+      {
+        path: 'webtoon/:webtoon',
+        name: 'WebToon',
+        component: WebtoonHomePage
+      },
+      {
+        path: 'episode/:webtoon/:episode',
+        name: 'Episode',
+        component: WebtoonEpisodeReader
       }
     ]
   }

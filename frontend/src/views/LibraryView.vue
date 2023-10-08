@@ -4,66 +4,6 @@ import GridBox from '@/components/webtoons/GridBox.vue'
 
 export default {
   name: 'LibraryView',
-  data: () => ({
-    webtoons: [
-      {
-        id: 1,
-        name: 'My Giant Nerd Boyfriend',
-        author: 'Fishball',
-        thumbnail: '/episodes/My Giant Nerd Boyfriend/thumbnail.webp',
-        favorite: false,
-        episodes: 8
-      },
-      {
-        id: 2,
-        name: 'My Giant Nerd Boyfriend',
-        author: 'Fishball',
-        thumbnail: '/episodes/My Giant Nerd Boyfriend/thumbnail.webp',
-        favorite: false,
-        episodes: 8
-      },
-      {
-        id: 3,
-        name: 'My Giant Nerd Boyfriend',
-        author: 'Fishball',
-        thumbnail: '/episodes/My Giant Nerd Boyfriend/thumbnail.webp',
-        favorite: false,
-        episodes: 8
-      },
-      {
-        id: 4,
-        name: 'My Giant Nerd Boyfriend',
-        author: 'Fishball',
-        thumbnail: '/episodes/My Giant Nerd Boyfriend/thumbnail.webp',
-        favorite: false,
-        episodes: 8
-      },
-      {
-        id: 5,
-        name: 'My Giant Nerd Boyfriend',
-        author: 'Fishball',
-        thumbnail: '/episodes/My Giant Nerd Boyfriend/thumbnail.webp',
-        favorite: false,
-        episodes: 8
-      },
-      {
-        id: 6,
-        name: 'My Giant Nerd Boyfriend',
-        author: 'Fishball',
-        thumbnail: '/episodes/My Giant Nerd Boyfriend/thumbnail.webp',
-        favorite: false,
-        episodes: 8
-      },
-      {
-        id: 7,
-        name: 'My Giant Nerd Boyfriend',
-        author: 'Fishball',
-        thumbnail: '/episodes/My Giant Nerd Boyfriend/thumbnail.webp',
-        favorite: false,
-        episodes: 8
-      }
-    ]
-  }),
   computed: {
     options () {
       return [
@@ -73,7 +13,8 @@ export default {
             name: 'grid'
           },
           value: 'all',
-          label: 'All'
+          label: 'All',
+          selected: true
         },
         {
           icon: {
@@ -92,6 +33,18 @@ export default {
           label: 'Others'
         }
       ]
+    },
+    webtoons () {
+      switch (this.$route.query.filter || 'all') {
+        case 'all':
+          return this.$store.getters.all
+        case 'favorites':
+          return this.$store.getters.favorites
+        case 'others':
+          return this.$store.getters.unliked
+        default:
+          return []
+      }
     }
   },
   components: {
@@ -100,11 +53,17 @@ export default {
   },
   methods: {
     select (s) {
-      console.log('Update next..')
+      this.$router.push(`/library?filter=${s.option.value}`)
     },
     like (e) {
-      this.webtoons[this.webtoons.indexOf(e.webtoon)].favorite = !this.webtoons[this.webtoons.indexOf(e.webtoon)].favorite
+      this.$store.dispatch('toggleFavorite', {
+        id: e.webtoon.id,
+        favorite: e.webtoon.favorite
+      })
     }
+  },
+  created () {
+    this.$store.dispatch('loadWebtoons')
   }
 }
 </script>

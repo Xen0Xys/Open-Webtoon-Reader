@@ -27,7 +27,7 @@ export default {
     <RouterLink :to="`/webtoon/${webtoon.id}`" class="box--link" />
 
     <header class="box__header">
-      <h2 class="box__header--title">{{ webtoon.name }}</h2>
+      <h2 class="box__header--title">{{ webtoon.title }}</h2>
       <p class="box__header--subtitle">{{ webtoon.author }}</p>
     </header>
 
@@ -35,7 +35,7 @@ export default {
       <IconSlot :type="webtoon.favorite ? 'fill' : 'outline'" name="heart" />
     </button>
 
-    <span class="box--episodes">{{ webtoon.episodes }} episodes</span>
+    <span class="box--episodes">{{ webtoon.episode_count }} episodes</span>
   </div>
 </template>
 

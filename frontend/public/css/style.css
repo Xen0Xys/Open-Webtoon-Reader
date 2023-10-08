@@ -2,6 +2,11 @@ html {
     font-size: clamp(0.875rem, 0.7614rem + 0.303vw, 1.125rem);
 }
 
+*::selection {
+    color: #FFFFFF;
+    background-color: #52E695;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
 }
