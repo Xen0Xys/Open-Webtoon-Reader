@@ -1,3 +1,4 @@
+const fs = require("fs");
 const {getWebtoons, findWebtoon} = require("./utils/webtoon");
 const {saveInDatabase} = require("./utils/saving/databaseSaving");
 
@@ -5,7 +6,11 @@ let webtoons = {}
 const languages = [
     "fr",
     "en",
-    "es"
+    "es",
+    "zh-hant",
+    "th",
+    "de",
+    "id"
 ]
 let cacheLoaded = false;
 let downloadStarted = false;
@@ -14,11 +19,29 @@ async function loadWebtoonCache(){
     webtoons = {};
     cacheLoaded = false;
     console.log("Loading webtoon cache");
+    if(fs.existsSync("./.cache/webtoons.json")){
+        webtoons = JSON.parse(fs.readFileSync("./.cache/webtoons.json"));
+        cacheLoaded = true;
+        console.log("Webtoon cache loaded from file");
+        return;
+    }
     for(const language of languages){
         webtoons[language] = await getWebtoons(language);
         console.log("Webtoons loaded for language " + language);
     }
+    saveWebtoonCache()
     cacheLoaded = true;
+    console.log("Webtoon cache loaded");
+}
+
+function saveWebtoonCache(){
+    fs.mkdirSync("./.cache", {recursive: true});
+    fs.writeFileSync("./.cache/webtoons.json", JSON.stringify(webtoons));
+}
+
+async function updateWebtoonCache(){
+    fs.rmSync("./.cache/webtoons.json");
+    await loadWebtoonCache();
 }
 
 function isCacheLoaded(){
@@ -43,13 +66,12 @@ function startDownload(webtoon, startEpisode){
     });
 }
 
-loadWebtoonCache().then(() => {
-    console.log("Webtoon cache loaded");
-});
+loadWebtoonCache().then(() => {});
 
 module.exports = {
     isCacheLoaded,
     isDownloading,
     findWebtoonInCache,
-    startDownload
+    startDownload,
+    updateWebtoonCache
 }
