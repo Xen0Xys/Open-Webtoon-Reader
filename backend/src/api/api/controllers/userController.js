@@ -15,7 +15,7 @@ async function loginUser(req, res){
     const token = await encodeToken({userId: userModel.id}, process.env.PRIVATE_KEY, process.env.TOKEN_DURATION);
     const jsonUser = userModel.toJSON();
     delete jsonUser.password;
-    res.status(200).json({user: jsonUser, token});
+    res.status(200).json({user: jsonUser, token, duration: process.env.TOKEN_DURATION});
 }
 
 async function checkUserLogin(req, res){
