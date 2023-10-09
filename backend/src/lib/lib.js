@@ -2,7 +2,7 @@ const fs = require("fs");
 const {getWebtoons, findWebtoon} = require("./utils/webtoon");
 const {saveInDatabase} = require("./utils/saving/databaseSaving");
 
-let webtoons = {}
+let webtoons = {};
 const languages = [
     "fr",
     "en",
@@ -11,7 +11,7 @@ const languages = [
     "th",
     "de",
     "id"
-]
+];
 let cacheLoaded = false;
 let downloadStarted = false;
 
@@ -29,7 +29,7 @@ async function loadWebtoonCache(){
         webtoons[language] = await getWebtoons(language);
         console.log("Webtoons loaded for language " + language);
     }
-    saveWebtoonCache()
+    saveWebtoonCache();
     cacheLoaded = true;
     console.log("Webtoon cache loaded");
 }
@@ -74,4 +74,4 @@ module.exports = {
     findWebtoonInCache,
     startDownload,
     updateWebtoonCache
-}
+};
