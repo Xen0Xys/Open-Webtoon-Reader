@@ -3,6 +3,7 @@ const {createAccountValidator, updatePasswordValidator, startDownloadValidator} 
 const sequelize = require("../../../common/database/sequelize");
 const encryption = require("../../../common/utils/encryption");
 const {getDownloadState, stopDbDownload} = require("../../../lib/utils/saving/databaseSaving");
+const {updateWebtoonCache, isCacheLoaded, isDownloading} = require("../../../lib/lib");
 
 async function createAccount(req, res){
     const value = await validators.validate(createAccountValidator, req.body, res);
@@ -32,6 +33,8 @@ async function deleteAccount(req, res){
 
 async function getAccounts(req, res){
     const users = await sequelize.models.users.findAll({attributes: {exclude: ["password"]}});
+    if(!users.length)
+        return res.status(404).json({message: "No users found"});
     res.status(200).json(users);
 }
 
@@ -55,7 +58,6 @@ function fetchDownloadState(req, res){
     res.status(200).json({state});
 }
 
-// TODO: Load webtoons in cache
 async function startDownload(req, res){
     const {isCacheLoaded, isDownloading, startDownload, findWebtoonInCache} = require("../../../lib/lib");
     if(!isCacheLoaded())
@@ -77,6 +79,31 @@ function stopDownload(req, res){
     res.status(200).json({message: "Download stopped"});
 }
 
+async function updateWebtoon(req, res){
+    const {isDownloading, startDownload, findWebtoonInCache} = require("../../../lib/lib");
+    if(isDownloading())
+        return res.status(400).json({message: "Download already started"});
+    const webtoonId = req.params.webtoon_id;
+    const webtoon = await sequelize.models.webtoons.findOne({where: {id: webtoonId}});
+    if(!webtoon)
+        return res.status(404).json({message: "Webtoon not found"});
+    const lastEpisode = await sequelize.models.episodes.findOne({where: {webtoon_id: webtoon.id}, order: [["number", "DESC"]]});
+    if(!lastEpisode)
+        return res.status(404).json({message: "Webtoon not found"});
+    const target = findWebtoonInCache(webtoon.title, webtoon.language);
+    if(!target)
+        return res.status(404).json({message: "Webtoon not found"});
+    startDownload(target, lastEpisode.number);
+    res.status(200).json({message: "Download started"});
+}
+
+function updateCache(req, res){
+    if(!isCacheLoaded())
+        return res.status(400).json({message: "Webtoon cache is currently loading"});
+    updateWebtoonCache();
+    res.status(200).json({message: "Cache update started"});
+}
+
 module.exports = {
     createAccount,
     deleteAccount,
@@ -84,5 +111,7 @@ module.exports = {
     updatePassword,
     fetchDownloadState,
     startDownload,
-    stopDownload
+    stopDownload,
+    updateWebtoon,
+    updateCache
 };

@@ -3,27 +3,29 @@
 This documentation provides an overview of the API routes and their corresponding validators for the application.
 ## Table of Contents
 - [Admin Routes](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#admin-routes)
-  - [Get All Webtoons](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#get-all-webtoons)
-  - [Create User Account](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#create-user-account)
-  - [Delete User Account](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#delete-user-account)
-  - [Get All User Accounts](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#get-all-user-accounts)
-  - [Update User Password](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#update-user-password)
-  - [Get Download State](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#get-download-state)
-  - [Start Download](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#start-download)
-  - [Stop Download](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#stop-download)
-- [Webtoon Routes](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#webtoon-routes)
-  - [Get All Webtoons](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#get-all-webtoons-webtoon)
-  - [Get Webtoon Episodes](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#get-webtoon-episodes)
-  - [Get Episode Images](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#get-episode-images)
-- [User Routes](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#user-routes)
-  - [User Login](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#user-login)
-  - [Check User Login](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#check-user-login)
-  - [Get User States](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#get-user-states)
-  - [Create User State](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#create-user-state)
-  - [Update User State](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#update-user-state)
-  - [Get User Favorites](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#get-user-favorites)
-  - [Add User Favorite](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#add-user-favorite)
-  - [Remove User Favorite](https://chat.openai.com/c/def8bf06-bf47-4eec-92c6-a19f7b1c212a#remove-user-favorite)
+  - [Get All Webtoons](#get-all-webtoons)
+  - [Create User Account](#create-user-account)
+  - [Delete User Account](#delete-user-account)
+  - [Get All User Accounts](#get-all-user-accounts)
+  - [Update User Password](#update-user-password)
+  - [Get Download State](#get-download-state)
+  - [Start Download](#start-download)
+  - [Stop Download](#stop-download)
+  - [Update Webtoon](#update-webtoon)
+  - [Update Webtoon Cache](#update-webtoon-cache)
+- [Webtoon Routes](#webtoon-routes)
+  - [Get All Webtoons](#get-all-webtoons-webtoon)
+  - [Get Webtoon Episodes](#get-webtoon-episodes)
+  - [Get Episode Images](#get-episode-images)
+- [User Routes](#user-routes)
+  - [User Login](#user-login)
+  - [Check User Login](#check-user-login)
+  - [Get User States](#get-user-states)
+  - [Create User State](#create-user-state)
+  - [Update User State](#update-user-state)
+  - [Get User Favorites](#get-user-favorites)
+  - [Add User Favorite](#add-user-favorite)
+  - [Remove User Favorite](#remove-user-favorite)
 ## Admin Routes
 ### Get All Webtoons
 - **Route** : `/admin/webtoons`
@@ -74,6 +76,16 @@ This documentation provides an overview of the API routes and their correspondin
 - **Route** : `/admin/download`
 - **Method** : DELETE
 - **Description** : Stop a download.
+- **Authentication** : Admin Authentication
+### Update Webtoon
+- **Route** : `/admin/download/:webtoon_id`
+- **Method** : POST
+- **Description** : Update a webtoon.
+- **Authentication** : Admin Authentication
+### Update Webtoon Cache
+- **Route** : `/admin/cache`
+- **Method** : PUT
+- **Description** : Update webtoon cache.
 - **Authentication** : Admin Authentication
 ## Webtoon Routes
 ### Get All Webtoons (Webtoon)

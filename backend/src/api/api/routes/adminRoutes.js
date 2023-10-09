@@ -1,6 +1,8 @@
 const adminAuthentication = require("../middlewares/adminAuthentication");
 const {getWebtoons} = require("../controllers/webtoonControllers");
-const {createAccount, deleteAccount, getAccounts, updatePassword, fetchDownloadState, startDownload, stopDownload} = require("../controllers/adminControllers");
+const {createAccount, deleteAccount, getAccounts, updatePassword, fetchDownloadState, startDownload, stopDownload, updateCache,
+    updateWebtoon
+} = require("../controllers/adminControllers");
 
 module.exports = (router) => {
     router.get("/admin/webtoons", adminAuthentication, async (req, res) => {
@@ -26,5 +28,11 @@ module.exports = (router) => {
     });
     router.delete("/admin/download", adminAuthentication, (req, res) => {
         stopDownload(req, res);
+    });
+    router.post("/admin/download/:webtoon_id", adminAuthentication, async (req, res) => {
+        await updateWebtoon(req, res);
+    });
+    router.put("/admin/cache", adminAuthentication, async (req, res) => {
+        updateCache(req, res);
     });
 };
