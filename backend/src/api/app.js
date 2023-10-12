@@ -17,6 +17,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
+const compression = require("compression");
 
 // Init middlewares
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use(rateLimit({
     legacyHeaders: false,
 }));
 app.use(morgan("dev"));
+app.use(compression());
 
 const router = express.Router();
 require("../common/handlers/routesHandler")(router);
@@ -66,3 +68,17 @@ if(process.env.SSL.toLowerCase() === "false"){
 }
 
 module.exports = app;
+
+const readline = require("readline");
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: "> " // Le prompt qui s'affichera pour chaque commande
+});
+
+rl.on("line", (input) => {
+    console.log(`Received: ${input}`);
+    rl.prompt();
+})
+
+rl.prompt();
