@@ -68,8 +68,8 @@ async function startDownload(req, res){
     if(isDownloading())
         return res.status(400).json({message: "Download already started"});
     const target = findWebtoonInCache(value.webtoonName, value.language);
-    if(!target)
-        return res.status(404).json({message: "Webtoon not found"});
+    if(target.error)
+        return res.status(400).json({message: target.error});
     startDownload(target, value.startEpisode);
     res.status(200).json({message: "Download started"});
 }
@@ -81,6 +81,8 @@ function stopDownload(req, res){
 
 async function updateWebtoon(req, res){
     const {isDownloading, startDownload, findWebtoonInCache} = require("../../../lib/lib");
+    if(!isCacheLoaded())
+        return res.status(400).json({message: "Webtoon cache not loaded"});
     if(isDownloading())
         return res.status(400).json({message: "Download already started"});
     const webtoonId = req.params.webtoon_id;

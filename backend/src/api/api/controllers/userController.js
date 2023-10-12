@@ -19,14 +19,14 @@ async function loginUser(req, res){
 }
 
 async function checkUserLogin(req, res){
-    res.status(200).json({user: req.user});
+    res.status(200).json(req.user);
 }
 
 async function getUserStates(req, res){
     const userId = req.user.id;
     const userStates = await sequelize.models.states.findAll({where: {user_id: userId}});
-    if(!userStates.length)
-        return res.status(404).json({message: "States not found"});
+    if(userStates.length === 0)
+        return res.status(204).json();
     res.status(200).json(userStates);
 }
 
@@ -59,8 +59,8 @@ async function updateUserState(req, res){
 async function getUserFavorites(req, res){
     const userId = req.user.id;
     const userFavorites = await sequelize.models.favorites.findAll({where: {user_id: userId}});
-    if(!userFavorites.length)
-        return res.status(404).json({message: "Favorites not found"});
+    if(userFavorites.length === 0)
+        return res.status(204).json();
     res.status(200).json(userFavorites);
 }
 
