@@ -1,10 +1,10 @@
-const axios = require("axios");
+const axiosInstance = require("./axiosInstance");
 const {JSDOM} = require("jsdom");
 
 async function getEpisodeLinks(webtoonLink, webtoonId, episodeNumber){
     const baseUrl = webtoonLink.replace(`/list?title_no=${webtoonId}`, "");
     const url = baseUrl + `/episode-${episodeNumber}/viewer?title_no=${webtoonId}&episode_no=${episodeNumber}`;
-    const response = await axios.get(url);
+    const response = await axiosInstance.get(url);
     const htmlContent = response.data;
     const dom = new JSDOM(htmlContent);
     const document = dom.window.document;
@@ -28,7 +28,7 @@ async function getEpisodes(webtoonLink){
     const webtoonId = webtoonLink.split("?title_no=")[1];
     const baseUrl = webtoonLink.replace(`/list?title_no=${webtoonId}`, "");
     const url = baseUrl + `/episode-1/viewer?title_no=${webtoonId}&episode_no=1`;
-    const response = await axios.get(url);
+    const response = await axiosInstance.get(url);
     const htmlContent = response.data;
     const dom = new JSDOM(htmlContent);
     const document = dom.window.document;

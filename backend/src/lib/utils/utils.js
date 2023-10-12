@@ -1,6 +1,5 @@
-const axios = require("axios");
 const sharp = require("sharp");
-const {ref} = require("joi");
+const axiosInstance = require("./axiosInstance");
 
 async function getImage(imageLink, format = "webp", referer = "https://www.webtoons.com/fr/"){
     switch (format.toLowerCase()){
@@ -14,7 +13,7 @@ async function getImage(imageLink, format = "webp", referer = "https://www.webto
 }
 
 async function getBufferedImage(imageLink, referer = "https://www.webtoons.com/fr/"){
-    const response = await axios.get(imageLink, {
+    const response = await axiosInstance.get(imageLink, {
         responseType: "arraybuffer",
         headers: {
             "Referer": referer

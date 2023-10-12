@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axiosInstance = require("./axiosInstance");
 const {JSDOM} = require("jsdom");
 
 const genres = [
@@ -36,7 +36,7 @@ async function getWebtoons(language="en") {
     const url = `https://www.webtoons.com/${language}/genres/`;
     const webtoons = [];
     for(const genre of genres){
-        const response = await axios.get(url + genre);
+        const response = await axiosInstance.get(url + genre);
         const htmlContent = response.data;
         const dom = new JSDOM(htmlContent);
         const document = dom.window.document;
@@ -69,7 +69,21 @@ async function getWebtoons(language="en") {
             }
         }
     }
-    return webtoons;
+    return removeDuplicateWebtoons(webtoons);
+}
+
+async function removeDuplicateWebtoons(webtoons){
+    const webtoonsWithoutDuplicates = [];
+    for(const webtoon of webtoons){
+        const existingWebtoon = webtoonsWithoutDuplicates.find(w => w.title === webtoon.title);
+        if(existingWebtoon){
+            existingWebtoon.genre.push(webtoon.genre);
+        }else{
+            webtoon.genre = [webtoon.genre];
+            webtoonsWithoutDuplicates.push(webtoon);
+        }
+    }
+    return webtoonsWithoutDuplicates;
 }
 
 async function parseMobileWebtoonBanner(mobileWebtoonDom){
@@ -94,11 +108,11 @@ async function parseWebtoonBanner(webtoonDom, mobileWebtoonDom){
 async function getWebtoonInfos(webtoon){
     const url = webtoon.link;
     const mobileUrl = url.replace("www.webtoons", "m.webtoons") + "&webtoon-platform-redirect=true";
-    const response = await axios.get(url);
+    const response = await axiosInstance.get(url);
     const htmlContent = response.data;
     const dom = new JSDOM(htmlContent);
     const document = dom.window.document;
-    const mobileResponse = await axios.get(mobileUrl, {
+    const mobileResponse = await axiosInstance.get(mobileUrl, {
         headers: {
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
         }
@@ -117,15 +131,38 @@ async function getWebtoonInfos(webtoon){
     };
 }
 
+function normalizeString(str) {
+    return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 /**
  * This function try to find a webtoon in a list of webtoons (not exactly the same name)
  * @param webtoons
  * @param name
  */
-function findWebtoon(webtoons, name){
-    return webtoons.find(webtoon => {
-        return webtoon.title.toLowerCase().includes(name.toLowerCase());
+function findWebtoon(webtoons, name) {
+    // Try to find one with exact name
+    const exactWebtoon = webtoons.find(webtoon => webtoon.title === name);
+    if(exactWebtoon)
+        return exactWebtoon;
+    // Try to find all with lower case
+    const lowerCaseWebtoons = webtoons.filter(webtoon => webtoon.title.toLowerCase() === name);
+    if(lowerCaseWebtoons.length === 1)
+        return lowerCaseWebtoons[0];
+    // Try with normalized string
+    name = normalizeString(name);
+    const matchingWebtoons = webtoons.filter(webtoon => {
+        const normalizedTitle = normalizeString(webtoon.title);
+        return normalizedTitle.includes(name);
     });
+    if (matchingWebtoons.length === 0)
+        return {error: "Webtoon not found"};
+    else if (matchingWebtoons.length > 1){
+        console.log(matchingWebtoons);
+        return {error: "Many webtoons found, please be more specific"};
+    }
+    else
+        return matchingWebtoons[0];
 }
 
 module.exports = {
