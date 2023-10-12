@@ -2,7 +2,7 @@ const {DataTypes} = require("sequelize");
 const {getModel} = require("../../handlers/modelsHandler");
 
 module.exports = (sequelize) => {
-    const Webtoons = sequelize.define("webtoons", {
+    return sequelize.define("webtoons", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -14,10 +14,6 @@ module.exports = (sequelize) => {
         },
         author: {
             type: DataTypes.TEXT,
-            allowNull: false
-        },
-        genre_id: {
-            type: DataTypes.INTEGER,
             allowNull: false
         },
         language: {
@@ -57,7 +53,4 @@ module.exports = (sequelize) => {
             }
         ]
     });
-    const Genres = getModel(sequelize, "genres.js");
-    Webtoons.belongsTo(Genres, {foreignKey: "genre_id"});
-    return Webtoons;
 };

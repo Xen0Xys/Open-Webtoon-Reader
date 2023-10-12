@@ -6,15 +6,12 @@ webtoons
   id int pk
   title varchar(255)
   author varchar(255)
-  genre_id int
   language varchar(10)
   link varchar(255)
   thumbnail varchar(255)
   background_banner varchar(255)
   top_banner varchar(255)
   mobile_banner varchar(255)
-
-fk webtoons.genre_id -> genres.id
 
 episodes
   id int pk
@@ -55,3 +52,11 @@ favorites
 
 fk favorites.user_id -> users.id
 fk favorites.webtoon_id -> webtoons.id
+
+webtoon_genres
+  id int pk
+  webtoon_id int
+  genre_id int
+
+fk webtoon_genres.webtoon_id -> webtoons.id
+fk webtoon_genres.genre_id -> genres.id
