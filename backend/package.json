@@ -7,7 +7,8 @@
     "lib": "node src/lib/app.js",
     "api": "node src/api/app.js",
     "api-dev": "nodemon src/api/app.js",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "migration": "node src/lib/migration/migration.js"
   },
   "author": "",
   "license": "ISC",
