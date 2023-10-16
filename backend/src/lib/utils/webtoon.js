@@ -19,16 +19,19 @@ const genres = [
 
 function parseWebtoonStars(stars){
     let copy = stars;
+    copy = copy.replace(",", ".");
+    copy = copy.replace("\ ", "");
+    copy = copy.replace(" ", "");
+    // console.log(copy);
     let multiplier = 1;
     if(copy.endsWith("M")){
         multiplier = 1000000;
         copy = copy.replace("M", "");
     }
-    copy = copy.replace(" ", "");
-    const number = parseFloat(copy) * multiplier;
+    const parsed = parseFloat(copy) * multiplier;
     return {
         raw: stars,
-        number
+        number: parsed
     };
 }
 

@@ -2,13 +2,14 @@
 const fs = require("fs");
 const {getEpisodeLinks, getEpisodes} = require("../episodes");
 const {getWebtoonInfos} = require("../webtoon");
-const {getImage, sleep, random} = require("../utils");
+const {getImage, sleep} = require("../utils");
 const sequelize = require("../../../common/database/sequelize");
 
 let downloadState = null;
+let stopSignal = false;
 
 function stopDbDownload(){
-    downloadState = null;
+    stopSignal = true;
 }
 
 function getDownloadState(){
@@ -19,14 +20,14 @@ async function saveInDatabase(webtoon, fromEp = 1, toEp = null){
     downloadState = `${fromEp}/${toEp}`;
     fromEp--;
     webtoon = await getWebtoonInfos(webtoon);
-    let path = `${process.env.SAVE_PATH}/${webtoon.title}`;
-    await initWebtoonDirectory(webtoon, path);
+    await initWebtoon(webtoon);
     const episodes = await getEpisodes(webtoon.link);
     if(!toEp) toEp = episodes.length - 1;
-    for(let i = fromEp; i <= toEp && downloadState; i++){
+    console.log(`Saving webtoon '${webtoon.title}' from episode ${fromEp + 1} to ${toEp + 1}`);
+    for(let i = fromEp; i <= toEp && !stopSignal; i++){
         downloadState = `${i + 1}/${toEp + 1}`;
         try{
-            await saveEpisode(webtoon, episodes, path, i);
+            await saveEpisode(webtoon, episodes, i);
         }catch(e){
             console.log(e);
             i--;
@@ -34,15 +35,20 @@ async function saveInDatabase(webtoon, fromEp = 1, toEp = null){
             await sleep(30000);
         }
     }
-    if(downloadState === null)
+    if(stopSignal)
         console.log("Download stopped");
-    else{
-        downloadState = null;
+    else
         console.log("Done");
-    }
+    stopSignal = false;
+    downloadState = null;
 }
 
-async function initWebtoonDirectory(webtoon, path){
+/**
+ * Init webtoon in database if not exists
+ * @param webtoon Webtoon object
+ * @returns {Promise<void>}
+ */
+async function initWebtoon(webtoon){
     const dbWebtoon = await sequelize.models.webtoons.findOne({where: {title: webtoon.title}});
     if(dbWebtoon){
         webtoon.dbId = dbWebtoon.id;
@@ -51,7 +57,7 @@ async function initWebtoonDirectory(webtoon, path){
     const title = webtoon.title;
     const author = webtoon.author;
     // Add genres in database
-    const genres = []
+    const genres = [];
     for(const webtoonGenre of webtoon.genre){
         let genre = await sequelize.models.genres.findOne({where: {name: webtoonGenre}});
         if(!genre)
@@ -60,10 +66,10 @@ async function initWebtoonDirectory(webtoon, path){
     }
     const language = webtoon.language;
     const link = webtoon.link;
-    const thumbnail = await getImage(webtoon.thumbnail, "dataurl");
-    const backgroundBanner = await getImage(webtoon.banner.backgroundBanner, "dataurl");
-    const topBanner = await getImage(webtoon.banner.topBanner, "dataurl");
-    const mobileBanner = await getImage(webtoon.banner.mobileBanner, "dataurl");
+    const thumbnail = await getImage(webtoon.thumbnail, "webp");
+    const backgroundBanner = await getImage(webtoon.banner.backgroundBanner, "webp");
+    const topBanner = await getImage(webtoon.banner.topBanner, "webp");
+    const mobileBanner = await getImage(webtoon.banner.mobileBanner, "webp");
     const webtoonModel = await sequelize.models.webtoons.create({
         title,
         author,
@@ -80,7 +86,7 @@ async function initWebtoonDirectory(webtoon, path){
     webtoon.dbId = webtoonModel.id;
 }
 
-async function saveEpisode(webtoon, episodes, path, epNumber){
+async function saveEpisode(webtoon, episodes, epNumber){
     console.log(`Saving episode ${epNumber + 1}/${episodes.length}`);
     const title = episodes[epNumber].title;
     const links = await getEpisodeLinks(webtoon.link, webtoon.id, epNumber + 1);
@@ -91,7 +97,7 @@ async function saveEpisode(webtoon, episodes, path, epNumber){
     }
     let episodeModel = await sequelize.models.episodes.findOne({where: {webtoon_id: webtoon.dbId, number: epNumber + 1}});
     if(!episodeModel){
-        const thumbnail = await getImage(episodes[epNumber].thumbnail, "dataurl");
+        const thumbnail = await getImage(episodes[epNumber].thumbnail, "webp");
         episodeModel = await sequelize.models.episodes.create({
             webtoon_id: webtoon.dbId,
             title,
@@ -102,11 +108,11 @@ async function saveEpisode(webtoon, episodes, path, epNumber){
     }
     const lastImage = await sequelize.models.images.findOne({where: {episode_id: episodeModel.id}, order: [["number", "DESC"]]});
     for(let i = lastImage !== null ? lastImage.number : 0; i < links.length && downloadState; i++){
+        console.log(`Saving image ${i + 1}/${links.length} for episode ${epNumber + 1}/${episodes.length}`);
         await saveEpisodePart(links[i], episodeModel.id, i, episodes[epNumber].link);
-        console.log(`Saved image ${i + 1}/${links.length} for episode ${epNumber + 1}/${episodes.length}`);
     }
-    let waitingRandom = random(2000, 8000);
-    console.log(`Episode ${epNumber + 1}/${episodes.length} saved, awaiting ${Math.round(waitingRandom / 1000)}s for next...`);
+    // let waitingRandom = random(2000, 8000);
+    // console.log(`Episode ${epNumber + 1}/${episodes.length} saved, awaiting ${Math.round(waitingRandom / 1000)}s for next...`);
     // await sleep(waitingRandom);
 }
 
@@ -119,7 +125,7 @@ async function saveEpisode(webtoon, episodes, path, epNumber){
  * @returns {Promise<void>}
  */
 async function saveEpisodePart(imageLink, episodeId, partNumber, referer){
-    const image = await getImage(imageLink, "dataurl", referer);
+    const image = await getImage(imageLink, "webp", referer);
     await sequelize.models.images.create({
         episode_id: episodeId,
         number: partNumber + 1,

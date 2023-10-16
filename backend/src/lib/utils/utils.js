@@ -6,10 +6,14 @@ async function getImage(imageLink, format = "webp", referer = "https://www.webto
     case "webp":
         return await getBufferedImage(imageLink, referer);
     case "dataurl":
-        return `data:image/webp;base64,${(await getBufferedImage(imageLink, referer)).toString("base64")}`;
+        return getDataUrl(await getBufferedImage(imageLink, referer));
     default:
         throw new Error("Invalid format");
     }
+}
+
+function getDataUrl(bufferedImage){
+    return `data:image/webp;base64,${bufferedImage.toString("base64")}`;
 }
 
 async function getBufferedImage(imageLink, referer = "https://www.webtoons.com/fr/"){
@@ -33,5 +37,6 @@ function random(min, max){
 module.exports = {
     getImage,
     sleep,
-    random
+    random,
+    getDataUrl
 };

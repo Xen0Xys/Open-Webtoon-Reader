@@ -8,4 +8,4 @@ const listValidator = joi.object({
 
 module.exports = {
     listValidator
-}
+};

@@ -1,6 +1,7 @@
 const sequelize = require("../../../common/database/sequelize");
 const validators = require("../../../common/utils/validators");
 const {listValidator} = require("../validators/commonValidators");
+const {getDataUrl} = require("../../../lib/utils/utils");
 
 /**
  * Find all models with options
@@ -19,7 +20,7 @@ async function findAllWithOptions(model, customOptions, values, attributes, excl
         offset: values.limit && values.page ? (values.page - 1) * values.limit : null,
         order: values.order.split(";").map((order) => order.split(",")),
         ...customOptions
-    }
+    };
     try{
         return await model.findAll(options);
     } catch (e){
@@ -46,6 +47,7 @@ async function getWebtoons(req, res) {
             const genre = await sequelize.models.genres.findOne({where: {id: genreId.genre_id}});
             webtoon.genres.push(genre.name);
         }
+        webtoon.thumbnail = getDataUrl(webtoon.thumbnail);
     }
     res.status(200).json(jsonWebtoons);
 }
@@ -59,16 +61,18 @@ async function getWebtoonEpisodes(req, res){
     if(!values)
         return;
     const episodes = await findAllWithOptions(sequelize.models.episodes, {where: {webtoon_id: webtoonId}}, values, null, false);
-    // const episodes = await sequelize.models.episodes.findAll({where: {webtoon_id: webtoonId}});
+    const jsonEpisodes = episodes.map((episode) => episode.toJSON());
+    for(const episode of jsonEpisodes)
+        episode.thumbnail = getDataUrl(episode.thumbnail);
     if(!episodes)
         return res.status(500).json({message: "Internal server error"});
     if(episodes.length === 0)
         return res.status(204);
     return res.status(200).json({
-        background_banner: webtoon.background_banner,
-        top_banner: webtoon.top_banner,
-        mobile_banner: webtoon.mobile_banner,
-        episodes
+        background_banner: getDataUrl(webtoon.background_banner),
+        top_banner: getDataUrl(webtoon.top_banner),
+        mobile_banner: getDataUrl(webtoon.mobile_banner),
+        jsonEpisodes
     });
 }
 
@@ -79,9 +83,10 @@ async function getEpisodeImages(req, res){
     if(!episode)
         return res.status(404).json({message: "Episode not found"});
     const images = await sequelize.models.images.findAll({where: {episode_id: episode.id}, order: [["number", "ASC"]], attributes: ["image"]});
-    if(images.length === 0)
+    const jsonImages = images.map((image) => getDataUrl(image.image));
+    if(jsonImages.length === 0)
         return res.status(204).json();
-    res.status(200).json(images);
+    res.status(200).json(jsonImages);
 }
 
 module.exports = {

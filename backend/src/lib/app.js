@@ -5,21 +5,19 @@ require("dotenv").config();
 // Init database
 require("./lib");
 require("../common/database/sequelize");
-const {saveInDatabase, stopDownload} = require("./utils/saving/databaseSaving");
-const {findWebtoonInCache, startDownload} = require("./lib");
+const {saveInDatabase, stopDownload, stopDbDownload} = require("./utils/saving/databaseSaving");
+const {findWebtoonInCache, startDownload, addDownloadToQueue, isCacheLoaded} = require("./lib");
+const {sleep} = require("./utils/utils");
 
 async function debug(){
-    // const webtoons = await getWebtoons("fr");
-    // // const target = findWebtoon(webtoons, "My giant nerd boyfriend");
-    // const target = findWebtoon(webtoons, "Tower of god");
-    // if(target.error)
-    //     return console.log(target.error);
-    // const completeTarget = await getWebtoonInfos(target);
-    // console.log(completeTarget);
-    // // await saveInDatabase(target);
-    const target = findWebtoonInCache("The Gamer", "fr");
-    console.log(target);
-    await saveInDatabase(target);
+    while(!isCacheLoaded())
+        await sleep(1000);
+    const target1 = findWebtoonInCache("The Gamer", "fr");
+    const target2 = findWebtoonInCache("Lillow fast kitchen", "fr");
+    // console.log(target1);
+    // console.log(target2);
+    addDownloadToQueue(target1, 1);
+    // addDownloadToQueue(target2, 1);
 }
 
 // Tests

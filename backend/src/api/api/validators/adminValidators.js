@@ -11,9 +11,9 @@ const updatePasswordValidator = joi.object({
 });
 
 const startDownloadValidator = joi.object({
-    webtoonName: joi.string().required(),
+    webtoonTitle: joi.string().required(),
     language: joi.string().required().max(10),
-    startEpisode: joi.number().required().min(1)
+    startEpisode: joi.number().min(1).default(1)
 });
 
 module.exports = {
