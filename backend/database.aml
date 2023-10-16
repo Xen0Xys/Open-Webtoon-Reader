@@ -1,46 +1,47 @@
 genres
-  id int pk
-  name varchar(255)
+  id smallint pk
+  name varchar(50)
 
 webtoons
-  id int pk
+  id smallint pk
   title varchar(255)
   author varchar(255)
   language varchar(10)
   link varchar(255)
-  thumbnail varchar(255)
-  background_banner varchar(255)
-  top_banner varchar(255)
-  mobile_banner varchar(255)
+  thumbnail blob
+  background_banner blob
+  top_banner blob
+  mobile_banner blob
 
 episodes
   id int pk
-  webtoon_id int
-  title varchar(255)
-  number int
-  thumbnail varchar(255)
+  webtoon_id smallint
+  title text
+  number smallint
+  image_number smallint
+  thumbnail blob
 
 fk episodes.webtoon_id -> webtoons.id
 
 images
   id int pk
   episode_id int
-  number int
-  image varchar(255)
+  number smallint
+  image blob
 
 fk images.episode_id -> episodes.id
 
 users
-  id int pk
+  id smallint pk
   username varchar(255)
   password varchar(255)
-  avatar varchar(255)
+  avatar blob
 
 states
   id int pk
-  user_id int
+  user_id smallint
   episode_id int
-  state int
+  state tinyint
 
 fk states.user_id -> users.id
 fk states.episode_id -> episodes.id
@@ -55,8 +56,8 @@ fk favorites.webtoon_id -> webtoons.id
 
 webtoon_genres
   id int pk
-  webtoon_id int
-  genre_id int
+  webtoon_id smallint
+  genre_id smallint
 
 fk webtoon_genres.webtoon_id -> webtoons.id
 fk webtoon_genres.genre_id -> genres.id
