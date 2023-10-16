@@ -1,8 +1,8 @@
 const {DataTypes} = require("sequelize");
-const {getModel} = require("../../handlers/modelsHandler");
+const {getModel} = require("../../../handlers/modelsHandlerV1");
 
 module.exports = (sequelize) => {
-    const States = sequelize.define("states", {
+    const Favorites = sequelize.define("favorites", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -12,18 +12,9 @@ module.exports = (sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        episode_id: {
+        webtoon_id: {
             type: DataTypes.INTEGER,
             allowNull: false
-        },
-        state: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                min: 0,
-                max: 100
-            }
-
         }
     },
     {
@@ -32,8 +23,8 @@ module.exports = (sequelize) => {
         updatedAt: false
     });
     const Users = getModel(sequelize, "users.js");
-    const Episodes = getModel(sequelize, "episodes.js");
-    States.belongsTo(Users, {foreignKey: "user_id"});
-    States.belongsTo(Episodes, {foreignKey: "episode_id"});
-    return States;
+    const Webtoons = getModel(sequelize, "webtoons.js");
+    Favorites.belongsTo(Users, {foreignKey: "user_id"});
+    Favorites.belongsTo(Webtoons, {foreignKey: "webtoon_id"});
+    return Favorites;
 };

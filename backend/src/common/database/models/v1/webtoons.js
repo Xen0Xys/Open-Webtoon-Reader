@@ -1,5 +1,5 @@
 const {DataTypes} = require("sequelize");
-const {getModel} = require("../../handlers/modelsHandler");
+const {getModel} = require("../../../handlers/modelsHandlerV1");
 
 module.exports = (sequelize) => {
     return sequelize.define("webtoons", {

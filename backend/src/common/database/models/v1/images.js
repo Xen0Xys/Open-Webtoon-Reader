@@ -1,19 +1,23 @@
 const {DataTypes} = require("sequelize");
-const {getModel} = require("../../handlers/modelsHandler");
+const {getModel} = require("../../../handlers/modelsHandlerV1");
 
 module.exports = (sequelize) => {
-    const webtoonGenres = sequelize.define("webtoon_genres", {
+    const Images = sequelize.define("images", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
-        webtoon_id: {
+        episode_id: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        genre_id: {
+        number: {
             type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        image: {
+            type: DataTypes.TEXT,
             allowNull: false
         }
     },
@@ -24,13 +28,11 @@ module.exports = (sequelize) => {
         indexes: [
             {
                 unique: true,
-                fields: ["webtoon_id", "genre_id"]
+                fields: ["episode_id", "number"]
             }
         ]
     });
-    const Webtoons = getModel(sequelize, "webtoons.js");
-    const Genres = getModel(sequelize, "genres.js");
-    webtoonGenres.belongsTo(Webtoons, {foreignKey: "webtoon_id"});
-    webtoonGenres.belongsTo(Genres, {foreignKey: "genre_id"});
-    return webtoonGenres;
+    const Episodes = getModel(sequelize, "episodes.js");
+    Images.belongsTo(Episodes, {foreignKey: "episode_id"});
+    return Images;
 };

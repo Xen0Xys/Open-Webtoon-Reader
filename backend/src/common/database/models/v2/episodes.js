@@ -1,5 +1,5 @@
 const {DataTypes} = require("sequelize");
-const {getModel} = require("../../handlers/modelsHandler");
+const {getModel} = require("../../../handlers/modelsHandlerV2");
 
 module.exports = (sequelize) => {
     const Episodes = sequelize.define("episodes", {
@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
             autoIncrement: true
         },
         webtoon_id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.SMALLINT.UNSIGNED,
             allowNull: false
         },
         title: {
@@ -17,22 +17,22 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         number: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.SMALLINT.UNSIGNED,
             allowNull: false
         },
         image_number: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.SMALLINT.UNSIGNED,
             allowNull: false
         },
         thumbnail: {
-            type: DataTypes.TEXT,
+            type: DataTypes.BLOB,
             allowNull: false
         }
     },
     {
         underscored: true,
-        createdAt: true,
-        updatedAt: true,
+        createdAt: false,
+        updatedAt: false,
         indexes: [
             {
                 unique: true,

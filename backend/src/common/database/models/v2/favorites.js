@@ -1,5 +1,5 @@
 const {DataTypes} = require("sequelize");
-const {getModel} = require("../../handlers/modelsHandler");
+const {getModel} = require("../../../handlers/modelsHandlerV2");
 
 module.exports = (sequelize) => {
     const Favorites = sequelize.define("favorites", {
