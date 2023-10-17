@@ -42,43 +42,34 @@ app.use(({res}) => res.status(404).json({message: "Route not found"}));
 
 const log = (secure) => console.log(`Server started on ${secure ? "https" : "http"}://${process.env.BIND_ADDRESS}:${process.env.PORT}`);
 
+function commandPrompt() {
+    const readline = require('readline');
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+    rl.setPrompt('');
+    rl.on('line', (input) => {
+        // TODO
+        rl.prompt();
+    });
+    rl.prompt();
+}
+
 // Start server
 if(process.env.SSL.toLowerCase() === "false"){
     app.listen(parseInt(process.env.PORT), process.env.BIND_ADDRESS, () => {
         log(false);
     });
 }else{
-    const passphrase = process.env.SSL_PASSPHRASE;
-    if(passphrase === ""){
-        https.createServer({
-            key: fs.readFileSync(process.env.SSL_KEY_FILE),
-            cert: fs.readFileSync(process.env.SSL_CERT_FILE)
-        }, app).listen(parseInt(process.env.PORT), () => {
-            log(true);
-        });
-    }else{
-        https.createServer({
-            key: fs.readFileSync(process.env.SSL_KEY_FILE),
-            cert: fs.readFileSync(process.env.SSL_CERT_FILE),
-            passphrase: process.env.SSL_PASSPHRASE
-        }, app).listen(parseInt(process.env.PORT), () => {
-            log(true);
-        });
-    }
+    https.createServer({
+        key: fs.readFileSync(process.env.SSL_KEY_FILE),
+        cert: fs.readFileSync(process.env.SSL_CERT_FILE)
+    }, app).listen(parseInt(process.env.PORT), () => {
+        log(true);
+    });
 }
 
+commandPrompt();
+
 module.exports = app;
-
-const readline = require("readline");
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    prompt: "> " // Le prompt qui s'affichera pour chaque commande
-});
-
-rl.on("line", (input) => {
-    console.log(`Received: ${input}`);
-    rl.prompt();
-})
-
-rl.prompt();
