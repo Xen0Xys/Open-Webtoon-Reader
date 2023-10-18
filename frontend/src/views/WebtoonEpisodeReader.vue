@@ -7,11 +7,8 @@ export default {
     images: []
   }),
   created () {
-    const webtoonId = parseInt(this.$route.params.webtoon)
-    const episodeId = parseInt(this.$route.params.episode)
-
-    axios.get(`/webtoons/${webtoonId}/episode/${episodeId}`).then(({ data }) => {
-      this.images = data.map(i => i.image)
+    axios.get(`/webtoons/${parseInt(this.$route.params.webtoon)}/episode/${parseInt(this.$route.params.episode)}`).then(({ data }) => {
+      this.images = data
     }).catch(console.log)
   }
 }

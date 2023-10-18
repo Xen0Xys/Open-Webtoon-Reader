@@ -4,18 +4,13 @@ import axios from 'axios'
 export default {
   name: 'WebtoonHomePage',
   data: () => ({
-    webtoon: undefined
+    webtoon: {},
+    episodes: []
   }),
   created () {
-    const id = parseInt(this.$route.params.webtoon)
-    this.webtoon = this.$store.state.webtoons.filter(w => w.id === id)[0]
-    if (!this.webtoon) return this.$router.push('/library')
-
-    axios.get(`/webtoons/${id}/episodes`).then(({ data }) => {
-      this.webtoon.background_banner = data.background_banner
-      this.webtoon.top_banner = data.top_banner
-      this.webtoon.mobile_banner = data.mobile_banner
-      this.webtoon.episodes = data.episodes
+    axios.get(`/webtoons/${parseInt(this.$route.params.webtoon)}/episodes`).then(({ data }) => {
+      this.webtoon = data.webtoon
+      this.episodes = data.episodes
     }).catch(console.log)
   }
 }
@@ -33,7 +28,7 @@ export default {
     </header>
 
     <section class="home--content">
-      <RouterLink :to="`/episode/${webtoon.id}/${episode.id}`" class="home__episode" :key="`ep-${episode.id}`" v-for="episode in webtoon.episodes">
+      <RouterLink :to="`/episode/${webtoon.id}/${episode.id}`" class="home__episode" :key="`ep-${episode.id}`" v-for="episode in episodes">
         <img :src="episode.thumbnail" alt="" class="home__episode--thumbnail" />
 
         <div class="home__episode__infos">
