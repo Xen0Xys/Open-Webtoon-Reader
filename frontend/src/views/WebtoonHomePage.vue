@@ -11,6 +11,15 @@ export default {
     axios.get(`/webtoons/${parseInt(this.$route.params.webtoon)}/episodes`).then(({ data }) => {
       this.webtoon = data.webtoon
       this.episodes = data.episodes
+
+      axios.get(`/user/states/webtoon/${this.webtoon.id}`).then(res => {
+        res.data.map(e => ({
+          id: e.episode_id,
+          state: e.state
+        })).forEach(e => {
+          this.episodes.filter(r => r.id === e.id)[0].state = e.state
+        })
+      })
     }).catch(console.log)
   }
 }
@@ -28,11 +37,11 @@ export default {
     </header>
 
     <section class="home--content">
-      <RouterLink :to="`/episode/${webtoon.id}/${episode.id}`" class="home__episode" :key="`ep-${episode.id}`" v-for="episode in episodes">
+      <RouterLink :to="`/episode/${webtoon.id}/${episode.number}`" class="home__episode" :key="`ep-${episode.id}`" v-for="episode in episodes">
         <img :src="episode.thumbnail" alt="" class="home__episode--thumbnail" />
 
         <div class="home__episode__infos">
-          <h2 class="home__episode__infos--title">{{ episode.title }}</h2>
+          <h2 class="home__episode__infos--title">{{ episode.title }}{{ episode.state ? ` (${episode.state}%)` : '' }}</h2>
           <p class="home__episode__infos__number"><span class="home__episode__infos__number--icon">#</span>{{ episode.number }}</p>
         </div>
       </RouterLink>

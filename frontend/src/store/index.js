@@ -28,13 +28,11 @@ export default createStore({
   actions: {
     loadWebtoons (state, payload) {
       axios.get('/webtoons').then(({ status, data }) => {
-        console.log(status, data)
         if (status === 204) return
         state.dispatch('loadFavorites', data)
       }).catch(console.log)
     },
     loadFavorites (state, payload) {
-      console.log(status)
       axios.get('/user/favorites').then(({ status, data }) => {
         if (status === 200 && data) data.forEach(w => { payload.find(we => we.id === w.webtoon_id).favorite = true })
         state.commit('loadWebtoons', payload)

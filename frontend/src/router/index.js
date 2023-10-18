@@ -1,15 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { isAuthenticated } from '@/assets/js/authentication'
 // Layouts
 import UserLayout from '@/layouts/UserLayout.vue'
 // Views
 import LibraryView from '@/views/LibraryView.vue'
 import WebtoonHomePage from '@/views/WebtoonHomePage.vue'
 import WebtoonEpisodeReader from '@/views/WebtoonEpisodeReader.vue'
+import LoginView from '@/views/auth/LoginView.vue'
 
 const routes = [
   {
     path: '/',
     component: UserLayout,
+    meta: {
+      needAuthentication: true
+    },
     children: [
       {
         path: '',
@@ -32,6 +37,13 @@ const routes = [
         component: WebtoonEpisodeReader
       }
     ]
+  },
+  {
+    path: '/auth/login',
+    component: LoginView,
+    meta: {
+      redirectIfConnected: true
+    }
   }
 ]
 
@@ -41,7 +53,11 @@ const router = createRouter({
 })
 
 const titleBase = 'OWR |'
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  const auth = isAuthenticated()
+  if (to.meta?.needAuthentication && !auth) return router.push('/auth/login')
+  if (to.meta?.redirectIfConnected && auth) return router.push('/')
+
   window.scrollTo({ top: 0 })
   document.title = `${titleBase} ${to.meta?.title || 'Welcome'}`
   next()

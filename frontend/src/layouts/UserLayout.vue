@@ -1,10 +1,18 @@
 <script>
 import LogoIcon from '@/components/misc/LogoIcon.vue'
+import { deleteCookie } from '@/assets/js/cookies'
+import tokenCookieName from '@/assets/js/authentication'
 
 export default {
   name: 'UserLayout',
   components: {
     LogoIcon
+  },
+  methods: {
+    logout () {
+      deleteCookie(tokenCookieName)
+      this.$router.push('/auth/login')
+    }
   }
 }
 </script>
@@ -19,7 +27,7 @@ export default {
       <RouterLink class="header__logo" to="/"><LogoIcon class="header__logo--icon" /></RouterLink>
 
       <nav class="header__menu right">
-        <button class="header__menu--btn">Logout</button>
+        <button class="header__menu--btn" @click="logout">Logout</button>
       </nav>
     </header>
 
