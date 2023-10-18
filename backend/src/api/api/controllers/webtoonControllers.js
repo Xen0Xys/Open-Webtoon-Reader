@@ -68,11 +68,14 @@ async function getWebtoonEpisodes(req, res){
         return res.status(500).json({message: "Internal server error"});
     if(episodes.length === 0)
         return res.status(204);
+    const jsonWebtoon = webtoon.toJSON();
+    jsonWebtoon.background_banner = getDataUrl(jsonWebtoon.background_banner);
+    jsonWebtoon.top_banner = getDataUrl(jsonWebtoon.top_banner);
+    jsonWebtoon.mobile_banner = getDataUrl(jsonWebtoon.mobile_banner);
+    jsonWebtoon.thumbnail = getDataUrl(jsonWebtoon.thumbnail);
     return res.status(200).json({
-        background_banner: getDataUrl(webtoon.background_banner),
-        top_banner: getDataUrl(webtoon.top_banner),
-        mobile_banner: getDataUrl(webtoon.mobile_banner),
-        jsonEpisodes
+        webtoon: jsonWebtoon,
+        episodes: jsonEpisodes
     });
 }
 
