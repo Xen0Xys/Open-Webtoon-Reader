@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const {compareHash} = require("../../../common/utils/encryption");
 
 module.exports = async (req, res, next) => {

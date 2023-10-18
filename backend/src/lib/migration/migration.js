@@ -1,5 +1,5 @@
+/* eslint-disable no-undef */
 const {Sequelize} = require("sequelize");
-const {getImage} = require("../utils/utils");
 
 let db1;
 let db2;
@@ -137,9 +137,9 @@ async function migrateImages() {
     const batchSize = 1000;
     let offset = 0;
     let totalCount = await db1.models.images.count();
-    const promises = []
+    const promises = [];
     const maxBatchCount = 10;
-    let currentBatchCount = 0
+    let currentBatchCount = 0;
     while (offset < totalCount) {
         promises.push(migrateImageBatch(batchSize, offset));
         currentBatchCount++;

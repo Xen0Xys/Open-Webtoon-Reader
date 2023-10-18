@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 const sharp = require("sharp");
 const axiosInstance = require("./axiosInstance");
 

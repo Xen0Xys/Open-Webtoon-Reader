@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-const fs = require("fs");
 const {getEpisodeLinks, getEpisodes} = require("../episodes");
 const {getWebtoonInfos} = require("../webtoon");
 const {getImage, sleep} = require("../utils");

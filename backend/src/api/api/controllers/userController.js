@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const validators = require("../../../common/utils/validators");
 const sequelize = require("../../../common/database/sequelize");
 const {loginUserValidator, stateValidator} = require("../validators/userValidators");

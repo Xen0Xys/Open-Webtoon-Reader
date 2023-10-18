@@ -20,7 +20,7 @@ const genres = [
 function parseWebtoonStars(stars){
     let copy = stars;
     copy = copy.replace(",", ".");
-    copy = copy.replace("\ ", "");
+    copy = copy.replace(" ", "");
     copy = copy.replace(" ", "");
     // console.log(copy);
     let multiplier = 1;

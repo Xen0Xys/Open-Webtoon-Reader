@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 // Importing modules
 const express = require("express");
 require("dotenv").config();
@@ -43,13 +44,13 @@ app.use(({res}) => res.status(404).json({message: "Route not found"}));
 const log = (secure) => console.log(`Server started on ${secure ? "https" : "http"}://${process.env.BIND_ADDRESS}:${process.env.PORT}`);
 
 function commandPrompt() {
-    const readline = require('readline');
+    const readline = require("readline");
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
     });
-    rl.setPrompt('');
-    rl.on('line', (input) => {
+    rl.setPrompt("");
+    rl.on("line", (input) => {
         // TODO
         rl.prompt();
     });
