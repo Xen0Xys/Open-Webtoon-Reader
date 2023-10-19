@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const jwt = require("jsonwebtoken");
 const sequelize = require("../../../common/database/sequelize");
+const {getDataUrl} = require("../../../lib/utils/utils");
 
 module.exports = async (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -20,6 +21,7 @@ module.exports = async (req, res, next) => {
     if(!user) return res.status(404).json({message: "User not found"});
     const jsonUser = user.toJSON();
     delete jsonUser.password;
+    jsonUser.avatar = getDataUrl(jsonUser.avatar);
     req.user = jsonUser;
     next();
 };

@@ -26,14 +26,15 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 app.use(helmet());
 app.use(rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 1000,
+    windowMs: 60 * 1000,
+    max: 100,
     standardHeaders: true,
     legacyHeaders: false,
 }));
 app.use(morgan("dev"));
 app.use(compression());
 
+// Configure router and load routes
 const router = express.Router();
 require("../common/handlers/routesHandler")(router);
 app.use("/api/v1", router);

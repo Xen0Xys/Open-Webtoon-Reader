@@ -89,7 +89,7 @@ async function getEpisodeImages(req, res){
     const jsonImages = images.map((image) => getDataUrl(image.image));
     if(jsonImages.length === 0)
         return res.status(204).json();
-    res.status(200).json(jsonImages);
+    res.status(200).json({episodeId: episode.id, imageList: jsonImages});
 }
 
 module.exports = {

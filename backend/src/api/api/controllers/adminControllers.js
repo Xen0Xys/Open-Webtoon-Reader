@@ -1,4 +1,4 @@
-const {createAccountValidator, updatePasswordValidator, startDownloadValidator} = require("../validators/adminValidators");
+const {updatePasswordValidator, startDownloadValidator} = require("../validators/adminValidators");
 const {getDownloadState, stopDbDownload} = require("../../../lib/utils/saving/databaseSaving");
 const sequelize = require("../../../common/database/sequelize");
 const encryption = require("../../../common/utils/encryption");
@@ -6,16 +6,13 @@ const validators = require("../../../common/utils/validators");
 const downloadLib = require("../../../lib/lib");
 
 async function createAccount(req, res){
-    const value = await validators.validate(createAccountValidator, req.body, res);
-    if(!value)
-        return;
-    if(await sequelize.models.users.findOne({where: {username: value.username}}))
+    if(await sequelize.models.users.findOne({where: {username: req.bodyValues.username}}))
         return res.status(400).json({message: "Username already taken"});
-    const hashedPassword = await encryption.hash(value.password);
+    const hashedPassword = await encryption.hash(req.bodyValues.password);
     const userModel = await sequelize.models.users.create({
-        username: value.username,
+        username: req.bodyValues.username,
         password: hashedPassword,
-        avatar: value.avatar
+        avatar: req.bodyValues.avatar
     });
     const jsonUser = userModel.toJSON();
     delete jsonUser.password;

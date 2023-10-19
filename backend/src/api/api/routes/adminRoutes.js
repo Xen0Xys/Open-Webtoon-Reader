@@ -6,12 +6,14 @@ const {createAccount, deleteAccount, getAccounts, updatePassword, stopCurrentDow
     getDownloadQueue,
     addDownload, updateAllWebtoons
 } = require("../controllers/adminControllers");
+const {createAccountValidator} = require("../validators/adminValidators");
+const {bodyValidation} = require("../middlewares/validation");
 
 module.exports = (router) => {
     router.get("/admin/webtoons", adminAuthentication, async (req, res) => {
         await getWebtoons(req, res);
     });
-    router.post("/admin/user", adminAuthentication, async (req, res) => {
+    router.post("/admin/user", adminAuthentication, bodyValidation(createAccountValidator), async (req, res) => {
         await createAccount(req, res);
     });
     router.delete("/admin/user/:user_id", adminAuthentication, async (req, res) => {
