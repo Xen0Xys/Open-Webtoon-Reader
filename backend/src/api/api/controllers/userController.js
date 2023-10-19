@@ -3,6 +3,7 @@ const validators = require("../../../common/utils/validators");
 const sequelize = require("../../../common/database/sequelize");
 const {loginUserValidator, stateValidator} = require("../validators/userValidators");
 const {compareHash, encodeToken} = require("../../../common/utils/encryption");
+const {getDataUrl} = require("../../../lib/utils/utils");
 
 async function loginUser(req, res){
     const value = await validators.validate(loginUserValidator, req.body, res);
@@ -16,6 +17,7 @@ async function loginUser(req, res){
     const token = await encodeToken({userId: userModel.id}, process.env.PRIVATE_KEY, process.env.TOKEN_DURATION);
     const jsonUser = userModel.toJSON();
     delete jsonUser.password;
+    jsonUser.avatar = getDataUrl(jsonUser.avatar);
     res.status(200).json({user: jsonUser, token, duration: process.env.TOKEN_DURATION});
 }
 
@@ -85,6 +87,27 @@ async function removeUserFavorite(req, res){
     res.status(200).json({message: "Webtoon removed from favorites"});
 }
 
+async function getUserState(req, res){
+    const userId = req.user.id;
+    const episodeId = parseInt(req.params.episode_id);
+    const userState = await sequelize.models.states.findOne({where: {user_id: userId, episode_id: episodeId}});
+    if(!userState)
+        return res.status(404).json({message: "State not found"});
+    res.status(200).json(userState);
+}
+
+async function getUserStatesForWebtoon(req, res){
+    const userId = req.user.id;
+    const webtoonId = parseInt(req.params.webtoon_id);
+    const userStates = await sequelize.models.states.findAll({where: {user_id: userId}, include: [{
+        model: sequelize.models.episodes,
+        where: {webtoon_id: webtoonId},
+    }]});
+    if(userStates.length === 0)
+        return res.status(204).json();
+    res.status(200).json(userStates);
+}
+
 module.exports = {
     loginUser,
     checkUserLogin,
@@ -93,5 +116,7 @@ module.exports = {
     updateUserState,
     getUserFavorites,
     addUserFavorite,
-    removeUserFavorite
+    removeUserFavorite,
+    getUserState,
+    getUserStatesForWebtoon
 };
