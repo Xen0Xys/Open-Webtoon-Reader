@@ -18,7 +18,7 @@ export default {
   methods: {
     saveProgress () {
       axios.put(`/user/state/${this.episodeId}`, {
-        state: this.progress * 100
+        state: Math.round(this.progress * 100)
       }).then(e => console.log(`Progression saved! (${e.data.state}%)`)).catch(console.log)
     },
     startStateObserver () {
@@ -37,19 +37,14 @@ export default {
     },
     startObserve () {
       this.observer = new IntersectionObserver((entries, observer) => {
-        entries.filter(e => e.isIntersecting || e.target.id === 'end').forEach(e => {
-          const { target, isIntersecting } = e
-
-          if (target.id === 'end') {
-            if (isIntersecting) this.touchTheEnd()
-            else this.startStateObserver()
-          } else this.currentImage = parseInt(target.getAttribute('data-count'))
+        entries.filter(e => e.isIntersecting).forEach(e => {
+          this.currentImage = parseInt(e.target.getAttribute('data-count'))
+          if (this.currentImage + 1 === this.images.length) this.touchTheEnd()
         })
       }, {
         threshold: 0.6
       })
 
-      this.observer.observe(document.getElementById('end'))
       document.querySelectorAll('.episode--image').forEach(e => this.observer.observe(e))
     }
   },
@@ -94,7 +89,6 @@ export default {
   <div class="episode" v-if="images.length > 0">
     <span class="episode--progress" :style="`--progress: ${progress};`"></span>
     <img :src="image" alt="" class="episode--image" :key="`img-${image}`" :data-count="index" v-for="(image, index) in images" />
-    <span id="end" v-if="images">END</span>
   </div>
 </template>
 
@@ -103,9 +97,13 @@ export default {
 
 .episode {
   display: flex;
-  padding: 4em 30em;
+  padding: 4em 0;
   align-items: center;
   flex-direction: column;
+
+  &--image {
+    min-width: 10em;
+  }
 
   &--progress {
     left: 0;
