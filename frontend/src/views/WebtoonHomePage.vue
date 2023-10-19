@@ -13,6 +13,7 @@ export default {
       this.episodes = data.episodes
 
       axios.get(`/user/states/webtoon/${this.webtoon.id}`).then(res => {
+        if (res.status === 204) return
         res.data.map(e => ({
           id: e.episode_id,
           state: e.state
