@@ -103,7 +103,7 @@ export default {
 
 .episode {
   display: flex;
-  padding: 4em 15em;
+  padding: 4em 30em;
   align-items: center;
   flex-direction: column;
 
